@@ -277,7 +277,7 @@ app.post("/api/albums", upload.single("image"), (req, res) => {
   };
 
   if (req.file) {
-    album.image = "images/albums/" + req.file.filename;
+    album.image = req.file.filename;
   }
 
   albums.push(album);
