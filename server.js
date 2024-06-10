@@ -142,6 +142,42 @@ app.post("/api/albums", upload.single("image"), (req, res) => {
   res.status(200).send(album);
 });
 
+app.put("/api/albums/:id", upload.single("img"), (req, res) => {
+  let album = albums.find((a) => a._id === parseInt(req.params.id));
+
+  if (!album) res.status(400).send("Album with given id was not found");
+
+  const result = validateAlbum(req.body);
+
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+
+  album.title = req.body.title;
+  album.genre = req.body.genre;
+  album.advisory = req.body.advisory;
+  album.artist = req.body.artist;
+
+  if (req.file) {
+    album.image = "images/albums" + req.file.filename;
+  }
+
+  res.send(album);
+});
+
+app.delete("/api/albums/:id", (req, res) => {
+  const album = albums.find((a) => a._id === parseInt(req.params.id));
+
+  if (!album) {
+    res.status(404).send("The house with the given id was not found");
+  }
+
+  const index = albums.indexOf(album);
+  albums.splice(index, 1);
+  res.send(album);
+});
+
 const validateAlbum = (album) => {
   const schema = Joi.object({
     _id: Joi.allow(""),
