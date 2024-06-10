@@ -160,7 +160,7 @@ app.put("/api/albums/:id", upload.single("img"), (req, res) => {
   album.artist = req.body.artist;
 
   if (req.file) {
-    album.image = "images/albums" + req.file.filename;
+    album.image = req.file.filename;
   }
 
   res.send(album);
