@@ -7,6 +7,32 @@ app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(cors());
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const uri =
+  "mongodb+srv://bdshilli:<ZEpqGCmtrtQNz1ZW>@data.hw2cdx0.mongodb.net/?retryWrites=true&w=majority&appName=Data";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,26 +57,7 @@ let albums = [
     genre: "Lofi",
     advisory: "SFW",
     artist: "Benji",
-    song_list: [
-      {
-        title: "Wolf Bork",
-        views: "1000",
-        length: "1:20",
-        audio: "file name",
-      },
-      {
-        title: "Bork Bork",
-        views: "2000",
-        length: "4:00",
-        audio: "file name",
-      },
-      {
-        title: "Wolf Wolf Bork",
-        views: "1000",
-        length: "3:30",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Wolf Bork", "Bork Bork", "Wolf Wolf Bork"],
   },
   {
     _id: 2,
@@ -59,26 +66,7 @@ let albums = [
     genre: "ASMR",
     advisory: "SFW",
     artist: "Pip",
-    song_list: [
-      {
-        title: "Shattering Glass",
-        views: "2000",
-        length: "2:15",
-        audio: "file name",
-      },
-      {
-        title: "Jumping in the Dark",
-        views: "1000",
-        length: "3:00",
-        audio: "file name",
-      },
-      {
-        title: "Constant Meowing",
-        views: "1000",
-        length: "3:10",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Shattering Glass", "Jumping in the Dark", "Constant Meowing"],
   },
   {
     _id: 3,
@@ -87,26 +75,7 @@ let albums = [
     genre: "Rap",
     advisory: "Explicit",
     artist: "Nic",
-    song_list: [
-      {
-        title: "Rivian Grind",
-        views: "2000",
-        length: "4:23",
-        audio: "file name",
-      },
-      {
-        title: "City Boy",
-        views: "1000",
-        length: "2:16",
-        audio: "file name",
-      },
-      {
-        title: "Uh Oh my Truck Broke Down",
-        views: "1000",
-        length: "2:13",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Rivian Grind", "City Boy", "Uh Oh my Truck Broke Down"],
   },
   {
     _id: 4,
@@ -115,26 +84,7 @@ let albums = [
     genre: "Hard Rock",
     advisory: "Explicit",
     artist: "Big Brad",
-    song_list: [
-      {
-        title: "Deadbeat Dad",
-        views: "9000",
-        length: "3:19",
-        audio: "file name",
-      },
-      {
-        title: "Jobless",
-        views: "1000",
-        length: "1:50",
-        audio: "file name",
-      },
-      {
-        title: "I'm not your real dad",
-        views: "1000",
-        length: "3:00",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Deadbeat Dad", "Jobless", "I'm not your real dad"],
   },
   {
     _id: 5,
@@ -143,26 +93,7 @@ let albums = [
     genre: "House",
     advisory: "Explicit",
     artist: "Big Brad",
-    song_list: [
-      {
-        title: "Loud Noises",
-        views: "1000",
-        length: "3:35",
-        audio: "file name",
-      },
-      {
-        title: "Alcohol Poisoning",
-        views: "1000",
-        length: "3:40",
-        audio: "file name",
-      },
-      {
-        title: "Cops are Here",
-        views: "3000",
-        length: "3:23",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Loud Noises", "Alcohol Poisoning", "Cops are Here"],
   },
   {
     _id: 6,
@@ -171,26 +102,7 @@ let albums = [
     genre: "Rock",
     advisory: "Explicit",
     artist: "Billy",
-    song_list: [
-      {
-        title: "Run",
-        views: "3000",
-        length: "2:18",
-        audio: "file name",
-      },
-      {
-        title: "Hide",
-        views: "1000",
-        length: "2:20",
-        audio: "file name",
-      },
-      {
-        title: "Distant Stalker",
-        views: "1000",
-        length: "1:50",
-        audio: "file name",
-      },
-    ],
+    song_list: ["Run", "Hide", "Distant Stalker"],
   },
   {
     _id: 7,
@@ -200,24 +112,9 @@ let albums = [
     advisory: "SFW",
     artist: "Jack",
     song_list: [
-      {
-        title: "Toilet Humor",
-        views: "1000",
-        length: "1:00",
-        audio: "file name",
-      },
-      {
-        title: "I Don't Know",
-        views: "3000",
-        length: "1:50",
-        audio: "file name",
-      },
-      {
-        title: "Something a Kid Would Laugh At",
-        views: "1000",
-        length: "2:16",
-        audio: "file name",
-      },
+      "Toilet Humor",
+      "I Don't Know",
+      "Something a Kid Would Laugh At",
     ],
   },
   {
@@ -227,26 +124,7 @@ let albums = [
     genre: "Rap",
     advisory: "NSFW",
     artist: "Benji",
-    song_list: [
-      {
-        title: "What to Do",
-        views: "1000",
-        length: "1:26",
-        audio: "file name",
-      },
-      {
-        title: "I Can't Choose",
-        views: "2000",
-        length: "3:50",
-        audio: "file name",
-      },
-      {
-        title: "Under Pressure",
-        views: "3000",
-        length: "2:16",
-        audio: "file name",
-      },
-    ],
+    song_list: ["What to Do", "I Can't Choose", "Under Pressure"],
   },
 ];
 
