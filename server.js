@@ -3,38 +3,44 @@ const cors = require("cors");
 const app = express();
 const Joi = require("joi");
 const multer = require("multer");
+const mongoose = require("mongoose");
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(cors());
-/*
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri =
-  "mongodb+srv://bdshilli:<ZEpqGCmtrtQNz1ZW>@data.hw2cdx0.mongodb.net/?retryWrites=true&w=majority&appName=Data";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+
+const url =
+  "mongodb+srv://bdshilli:ZEpqGCmtrtQNz1ZW@data.hw2cdx0.mongodb.net/?retryWrites=true&w=majority&appName=Data";
+
+mongoose
+  .connext(url)
+  .then(() => console.log("Connected to mongodb"))
+  .catch((error) => console.log("Couldnt connect to mongodb", error));
+
+const albumSchema = new mongoose.Schema({
+  title: String,
+  artist: String,
+  genre: String,
+  advisory: String,
+  image: String,
 });
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-run().catch(console.dir);
-*/
+
+const Album = mongoose.model("Album", albumSchema);
+
+const createAlbum = async () => {
+  const album = new Album({
+    title: "hi",
+    artist: "hi",
+    genre: "hi",
+    advisory: "nsfw",
+    image: "hi.jpg",
+  });
+
+  const result = await album.save();
+  console.log(result);
+};
+
+createAlbum();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
