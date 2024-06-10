@@ -57,7 +57,6 @@ let albums = [
     genre: "Lofi",
     advisory: "SFW",
     artist: "Benji",
-    song_list: ["Wolf Bork", "Bork Bork", "Wolf Wolf Bork"],
   },
   {
     _id: 2,
@@ -66,7 +65,6 @@ let albums = [
     genre: "ASMR",
     advisory: "SFW",
     artist: "Pip",
-    song_list: ["Shattering Glass", "Jumping in the Dark", "Constant Meowing"],
   },
   {
     _id: 3,
@@ -75,7 +73,6 @@ let albums = [
     genre: "Rap",
     advisory: "Explicit",
     artist: "Nic",
-    song_list: ["Rivian Grind", "City Boy", "Uh Oh my Truck Broke Down"],
   },
   {
     _id: 4,
@@ -84,7 +81,6 @@ let albums = [
     genre: "Hard Rock",
     advisory: "Explicit",
     artist: "Big Brad",
-    song_list: ["Deadbeat Dad", "Jobless", "I'm not your real dad"],
   },
   {
     _id: 5,
@@ -93,7 +89,6 @@ let albums = [
     genre: "House",
     advisory: "Explicit",
     artist: "Big Brad",
-    song_list: ["Loud Noises", "Alcohol Poisoning", "Cops are Here"],
   },
   {
     _id: 6,
@@ -102,7 +97,6 @@ let albums = [
     genre: "Rock",
     advisory: "Explicit",
     artist: "Billy",
-    song_list: ["Run", "Hide", "Distant Stalker"],
   },
   {
     _id: 7,
@@ -111,11 +105,6 @@ let albums = [
     genre: "Commedy",
     advisory: "SFW",
     artist: "Jack",
-    song_list: [
-      "Toilet Humor",
-      "I Don't Know",
-      "Something a Kid Would Laugh At",
-    ],
   },
   {
     _id: 8,
@@ -124,7 +113,6 @@ let albums = [
     genre: "Rap",
     advisory: "NSFW",
     artist: "Benji",
-    song_list: ["What to Do", "I Can't Choose", "Under Pressure"],
   },
 ];
 
@@ -144,14 +132,6 @@ app.post("/api/albums", upload.single("image"), (req, res) => {
     genre: req.body.genre,
     advisory: req.body.advisory,
     artist: req.body.artist,
-    song_list: [
-      {
-        title: "WIP",
-        views: "WIP",
-        length: "WIP",
-        audio: "file name",
-      },
-    ],
   };
 
   if (req.file) {
