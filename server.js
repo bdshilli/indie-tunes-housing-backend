@@ -7,6 +7,7 @@ app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(cors());
+/*
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri =
   "mongodb+srv://bdshilli:<ZEpqGCmtrtQNz1ZW>@data.hw2cdx0.mongodb.net/?retryWrites=true&w=majority&appName=Data";
@@ -33,6 +34,7 @@ async function run() {
   }
 }
 run().catch(console.dir);
+*/
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
