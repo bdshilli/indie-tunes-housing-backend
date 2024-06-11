@@ -13,7 +13,7 @@ const url =
   "mongodb+srv://bdshilli:ZEpqGCmtrtQNz1ZW@data.hw2cdx0.mongodb.net/?retryWrites=true&w=majority&appName=Data";
 
 mongoose
-  .connext(url)
+  .connect(url)
   .then(() => console.log("Connected to mongodb"))
   .catch((error) => console.log("Couldnt connect to mongodb", error));
 
@@ -26,21 +26,6 @@ const albumSchema = new mongoose.Schema({
 });
 
 const Album = mongoose.model("Album", albumSchema);
-
-const createAlbum = async () => {
-  const album = new Album({
-    title: "hi",
-    artist: "hi",
-    genre: "hi",
-    advisory: "nsfw",
-    image: "hi.jpg",
-  });
-
-  const result = await album.save();
-  console.log(result);
-};
-
-createAlbum();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -57,85 +42,41 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-let albums = [
-  {
-    _id: 1,
-    title: "Dog Days",
-    image: "benji.jpg",
-    genre: "Lofi",
-    advisory: "SFW",
-    artist: "Benji",
-  },
-  {
-    _id: 2,
-    title: "Cat Nights",
-    image: "pip.jpg",
-    genre: "ASMR",
-    advisory: "SFW",
-    artist: "Pip",
-  },
-  {
-    _id: 3,
-    title: "Redneck Rap",
-    image: "nic.jpg",
-    genre: "Rap",
-    advisory: "Explicit",
-    artist: "Nic",
-  },
-  {
-    _id: 4,
-    title: "Stepdad Vibes",
-    image: "bradley2.jpg",
-    genre: "Hard Rock",
-    advisory: "Explicit",
-    artist: "Big Brad",
-  },
-  {
-    _id: 5,
-    title: "Party Night",
-    image: "bradley.jpg",
-    genre: "House",
-    advisory: "Explicit",
-    artist: "Big Brad",
-  },
-  {
-    _id: 6,
-    title: "In the Dark",
-    image: "eye.jpg",
-    genre: "Rock",
-    advisory: "Explicit",
-    artist: "Billy",
-  },
-  {
-    _id: 7,
-    title: "Bidet",
-    image: "bidet.jpg",
-    genre: "Commedy",
-    advisory: "SFW",
-    artist: "Jack",
-  },
-  {
-    _id: 8,
-    title: "Indecisive",
-    image: "nic2.png",
-    genre: "Rap",
-    advisory: "NSFW",
-    artist: "Benji",
-  },
-];
-
-app.get("/api/albums", (req, res) => {
+app.get("/api/albums", async (req, res) => {
+  const albums = await Album.find();
   res.send(albums);
 });
 
-app.post("/api/albums", upload.single("image"), (req, res) => {
+app.post("/api/albums", upload.single("image"), async (req, res) => {
   const result = validateAlbum(req.body);
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
     return;
   }
-  const album = {
-    _id: albums.length + 1,
+  const album = new Album({
+    title: req.body.title,
+    genre: req.body.genre,
+    advisory: req.body.advisory,
+    artist: req.body.artist,
+  });
+
+  if (req.file) {
+    album.image = req.file.filename;
+  }
+
+  const newAlbum = await album.save();
+  res.send(newAlbum);
+});
+
+app.put("/api/albums/:id", upload.single("img"), async (req, res) => {
+  const result = validateAlbum(req.body);
+
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+
+  let fieldsToUpdate = {
     title: req.body.title,
     genre: req.body.genre,
     advisory: req.body.advisory,
@@ -143,46 +84,21 @@ app.post("/api/albums", upload.single("image"), (req, res) => {
   };
 
   if (req.file) {
-    album.image = req.file.filename;
+    fieldsToUpdate.image = req.file.filename;
   }
 
-  albums.push(album);
-  res.status(200).send(album);
+  const wentThrough = await Album.updateOne(
+    { _id: req.params.id },
+    fieldsToUpdate
+  );
+
+  const updatedAlbum = await Album.findOne({ _id: req.params.id });
+
+  res.send(updatedAlbum);
 });
 
-app.put("/api/albums/:id", upload.single("img"), (req, res) => {
-  let album = albums.find((a) => a._id === parseInt(req.params.id));
-
-  if (!album) res.status(400).send("Album with given id was not found");
-
-  const result = validateAlbum(req.body);
-
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
-
-  album.title = req.body.title;
-  album.genre = req.body.genre;
-  album.advisory = req.body.advisory;
-  album.artist = req.body.artist;
-
-  if (req.file) {
-    album.image = req.file.filename;
-  }
-
-  res.send(album);
-});
-
-app.delete("/api/albums/:id", (req, res) => {
-  const album = albums.find((a) => a._id === parseInt(req.params.id));
-
-  if (!album) {
-    res.status(404).send("The house with the given id was not found");
-  }
-
-  const index = albums.indexOf(album);
-  albums.splice(index, 1);
+app.delete("/api/albums/:id", async (req, res) => {
+  const album = await Album.findByIdAndDelete(req.params.id);
   res.send(album);
 });
 
